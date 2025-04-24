@@ -70,14 +70,21 @@ void array_dump(Board board) {
     }
 }
 
-// unsigned int get_points(Board board, player_t player, unsigned int round) {
-//     unsigned int points=0u;
-//     /*
-//      * COMPLETAR
-//      *
-//      **/
-//     return points;
-// }
+unsigned int get_points(Board board, player_t player, unsigned int round) {
+    unsigned int points = 0u;
+
+
+    for (unsigned int row = 0u; row < ROWS; row++) {
+        for (unsigned int col = 0u; col < COLUMNS; col++) {
+            cell_t c = board[row][col][player];
+            if (c.content == ship && c.status == hit && c.round <= round) {
+                points += 100u;
+            }
+        }
+    }
+
+    return points;
+}
 
 static unsigned int max(unsigned int x, unsigned int y) {
     return x >= y ? x: y;
@@ -103,6 +110,16 @@ unsigned int array_from_file(Board board, const char *filepath) {
                     check_filelines + 1);
             exit(EXIT_FAILURE);
         }
+
+        unsigned int my_row = s_row - FST_ROW;
+        unsigned int my_column = k_column - FST_COLUMN;
+
+        if (my_row >= ROWS || my_column >= COLUMNS) {
+            fprintf(stderr, "Error: coordenadas fuera de rango en la línea %u.\n", check_filelines + 1);
+            fprintf(stderr, "Fila: %c (%u), Columna: %u\n", s_row, my_row, k_column);
+            exit(EXIT_FAILURE);
+        }
+
         //las inicialice en cero
         unsigned int row = s_row - FST_ROW;
         unsigned int column = k_column - FST_COLUMN;
